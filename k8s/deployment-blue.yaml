@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-blue
+  labels:
+    app: myapp
+    environment: blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+      environment: blue
+  template:
+    metadata:
+      labels:
+        app: myapp
+        environment: blue
+    spec:
+      containers:
+      - name: myapp
+        image: myapp-blue-green:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20 
